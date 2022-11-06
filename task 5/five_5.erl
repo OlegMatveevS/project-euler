@@ -1,4 +1,4 @@
--module(five).
+-module(five_5).
 -author("oleg").
 
 %% API
