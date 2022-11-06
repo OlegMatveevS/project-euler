@@ -12,7 +12,6 @@
 -export([]).
 
 %% Common code %%
-
 is_divided_result(0) -> true;
 is_divided_result(_) -> false.
 
@@ -21,47 +20,50 @@ is_divided_without_rem_on_seq(Number, Start, Finish) ->
 
 
 %% Tail recursion implementation return result %%
+
+
 tail_recursion_start() ->
-  tail_recursion(100, 300000000).
+  tail_recursion(232792559, 300000000).
 
 tail_recursion(Start, Finish) ->
   tail_recursion(Start, Finish, 0).
 
 tail_recursion(Start, Finish, Acc) ->
-  case is_divided_without_rem_on_seq(Start, 1, 20) of
-    true -> Start;
+  case is_divided_without_rem_on_seq(Start, 2, 20) of
+    true -> Start + 0;
     false -> tail_recursion(Start + 1, Finish, Acc)
   end.
 
 
-%% recursion implementation return result
-recursion_start() ->
-  recursion(1).
+%% recursion implementation return result in value
+recursion_start() -> recursion(1) + 0.
 
-recursion(300000000) -> 0;
+recursion(3000) -> 0;
 
 recursion(Number) ->
   case recursion(Number + 1) of
     Result when Result == 0 ->
-      case is_divided_without_rem_on_seq(Number, 2, 20) of
+      case is_divided_without_rem_on_seq(Number, 1, 10) of
         true -> Number;
         false -> Result
       end;
     Result when Result =/= 0 -> Result
   end.
 
+
 %% Filter implementation return result %%
+
 filter_start() ->
   lists:nth(
     1,
     [Y ||
-      Y <- [X || X <- lists:seq(1, 300000000), X rem 2 == 0],
-      is_divided_without_rem_on_seq(Y, 3, 20) == true]).
+      Y <- [X || X <- lists:seq(1, 3000), X rem 2 == 0],
+      is_divided_without_rem_on_seq(Y, 1, 10) == true]).
 
 %% Map implementation %%
 
 map_start() ->
-  map(2).
+  map(1).
 
 check_item(true, Item) -> Item;
 
@@ -73,11 +75,10 @@ map(Start) ->
     [X ||
       X <- lists:map(
         fun(Item) ->
-          check_item(is_divided_without_rem_on_seq(Item, 2, 20), Item)
+          check_item(is_divided_without_rem_on_seq(Item, 1, 10), Item)
         end,
-        lists:seq(Start, 300000000)
+        lists:seq(Start, 3000)
       ),
       X =/= 0
     ]
   ).
-
