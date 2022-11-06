@@ -13,6 +13,8 @@ third_test() ->
   ?assertEqual(983, period:fold_start()).
 four_test() ->
   ?assertEqual(983, period:map_start()).
+five_test() ->
+  ?assertEqual(983, period:endless_list_start()).
 
 
 

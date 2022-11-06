@@ -2,7 +2,7 @@
 -author("олег").
 
 %% API
--export([tail_recursion_start/0, recursion_start/0, fold_start/0, map_start/0]).
+-export([tail_recursion_start/0, recursion_start/0, fold_start/0, map_start/0, endless_list_start/0]).
 
 -export([]).
 
@@ -109,3 +109,35 @@ is_prime(Number) ->
         _ -> false
       end
   end.
+
+%% Endless list implementation %%
+endless_list_start() -> endless_list_find_solution(1, 0, 0, maps:new()).
+
+fill_map_loop(ListIter, Counter, M, Max, UsedPrimes) ->
+  case endless_list:filter_next(ListIter, fun is_prime/1) of
+    Error when Error == error -> exit("Endless list generator timed out!");
+    NextPrime when NextPrime > 997 -> {Max, UsedPrimes};
+    NextPrime when NextPrime =< 997 ->
+      MaxUsedPrimesTuple = fill_map(NextPrime, Counter, M, Max, UsedPrimes),
+      fill_map_loop(ListIter, Counter, M, element(1, MaxUsedPrimesTuple), element(2, MaxUsedPrimesTuple))
+  end.
+
+fill_map(NextPrime, Counter, M, Max, UsedPrimes) ->
+  case maps:get(NextPrime, UsedPrimes, none) == none of IsNotInUsedPrimes
+    when IsNotInUsedPrimes == true, M rem NextPrime == 0 ->
+    NewUsedPrimes = maps:put(NextPrime, NextPrime, UsedPrimes),
+    case Counter > Max of
+      true -> {NextPrime, NewUsedPrimes};
+      _ -> {Max, NewUsedPrimes}
+    end;
+    _ -> {Max, UsedPrimes}
+  end.
+
+endless_list_find_solution(1001, _, Max, _) -> Max;
+
+endless_list_find_solution(Counter, M, Max, UsedPrimes) ->
+  NewM = M * 10 + 9,
+  ListIter = endless_list:create(fun(X) -> X + 1 end, 2),
+  MaxUsedPrimesTuple = fill_map_loop(ListIter, Counter, NewM, Max, UsedPrimes),
+  endless_list:delete(ListIter),
+  endless_list_find_solution(Counter + 1, NewM, element(1, MaxUsedPrimesTuple), element(2, MaxUsedPrimesTuple)).

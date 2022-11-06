@@ -7,7 +7,7 @@
   recursion_start/0,
   filter_start/0,
   map_start/0
-]).
+  , endless_list_start/0]).
 
 -export([]).
 
@@ -82,3 +82,23 @@ map(Start) ->
       X =/= 0
     ]
   ).
+
+%% Endless list implementation %%
+
+endless_list_start() ->
+  ListIter = endless_list:create(fun(X) -> X + 1 end, 1),
+  endless_list_find_solution(ListIter, 1).
+
+endless_list_find_solution(_, 300000000) -> 0;
+
+endless_list_find_solution(Iter, Count) ->
+  Value = endless_list:next(Iter),
+  case Value of
+    error -> exit("Endless list timed out!");
+    _ ->
+      case is_divided_without_rem_on_seq(Value, 1, 10) of
+        true -> Value;
+        _ -> endless_list_find_solution(Iter, Count + 1)
+      end
+  end.
+
