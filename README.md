@@ -148,3 +148,107 @@ Find the value of d < 1000 for which 1/d contains the longest recurring cycle in
         }
         return 0;
     }
+    
+    
+### Problem 26
+
+1. __Хвостовая рекурсия__
+   ```
+   tail_recursion_start() ->
+     tail_recursion(1, 0).
+
+    tail_recursion(1001, Max) ->
+      Max;
+
+    tail_recursion(Number, Max) ->
+     case string:length(period_generator(Number, 0, "", 1, maps:new())) of PeriodLen
+        when PeriodLen > Max -> tail_recursion(Number + 1, PeriodLen);
+       _ -> tail_recursion(Number + 1, Max)
+      end.
+
+    period_generator(N, Position, Period, Rem, FirstPos) ->
+     case maps:get(Rem, FirstPos, none) of
+       none ->
+          period_generator(
+            N,
+            Position + 1,
+            Period ++ integer_to_list(Rem div N),
+            (Rem rem N) * 10,
+            maps:put(Rem, Position, FirstPos));
+       _ -> Period
+     end.
+2. __Рекурсия__
+   ```
+   recursion_start() ->
+     recursion(1, 0).
+
+    recursion(1001, Max) ->
+     Max;
+
+    recursion(Number, Max) ->
+     NewMax = recursion(Number + 1, Max),
+      case string:length(period_generator(Number, 0, "", 1, maps:new())) of PeriodLen
+       when PeriodLen > NewMax -> PeriodLen;
+        _ -> NewMax
+      end.
+     
+3. __Fold implementation__
+   ```
+   get_prime_list(Max) -> [X || X <- lists:seq(2, Max), is_prime(X)].
+
+    period_fold(N, PrimeList) ->
+     lists:foldl(
+       fun(_, MDigits) ->
+         NewM = (lists:nth(1, MDigits) + 1) * 10 - 1,
+         NewList = [X || X <- MDigits, NewM rem X =/= 0],
+         [NewM | NewList -- [lists:nth(1, MDigits)]]
+        end,
+       [0 | PrimeList],
+       lists:seq(2, N)
+     ).
+
+    fold_start() ->
+     lists:last(period_fold(981, get_prime_list(1001))).
+     
+4. __Map implementation__
+   ```
+   map_start() -> map().
+
+    map() -> element(2, map(1, get_prime_list(990), 0, 0)).
+
+    map(1001, List, Max, _M) -> {List, Max + 1};
+
+    map(Counter, List, Max, M) ->
+      NewM = M * 10 + 9,
+      ListAndMax = lists:mapfoldl(
+        fun(Item, Test) ->
+          case Item =/= 0 of
+           Result when Result == true, NewM rem Item == 0 ->
+              case Counter > Test of
+                true -> {0, Counter};
+                _ -> {0, Test}
+              end;
+            _ -> {Item, Max}
+          end
+       end,
+        Max,
+        List
+     ),
+      map(Counter + 1, element(1, ListAndMax), element(2, ListAndMax), NewM).
+
+
+    is_prime(Number) ->
+      case Number of Number
+        when Number =< 2 -> Number == 2;
+       _ ->
+          case Number rem 2 =/= 0 of
+            true ->
+             lists:all(
+                fun(Item) ->
+                 Number rem Item =/= 0
+               end,
+                [X || X <- lists:seq(3, round(math:sqrt(Number))), X rem 2 =/= 0]
+              );
+            _ -> false
+         end
+      end.
