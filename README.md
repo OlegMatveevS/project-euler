@@ -65,7 +65,7 @@ Find the value of d < 1000 for which 1/d contains the longest recurring cycle in
     
     tail_recursion_start() -> tail_recursion(1, false).
 
-    tail_recursion(300000000, _) -> print_answer(0);
+    tail_recursion(?PROPERTY_MAX_COUNTER, _) -> print_answer(0);
 
     tail_recursion(Number, true) -> print_answer(Number - 1);
 
@@ -79,7 +79,7 @@ Find the value of d < 1000 for which 1/d contains the longest recurring cycle in
     ```
     recursion_start() -> print_answer(recursion(1)).
 
-    recursion(300000000) -> 0;
+    recursion(?PROPERTY_MAX_COUNTER) -> 0;
 
     recursion(Number) ->
       case recursion(Number + 1) of
@@ -100,7 +100,7 @@ Find the value of d < 1000 for which 1/d contains the longest recurring cycle in
         lists:nth(
           1,
           [Y ||
-            Y <- [X || X <- lists:seq(1, 300000000), X rem 2 == 0],
+            Y <- [X || X <- lists:seq(1, ?PROPERTY_MAX_COUNTER), X rem 2 == 0],
             is_divided_without_rem_on_seq(Y, 3, 20) == true])).
      ```
      Генерируем сначала только четные числа(т.к есть условии делимости на них), далее только те, что удовлетворяют условию функции
@@ -122,7 +122,7 @@ Find the value of d < 1000 for which 1/d contains the longest recurring cycle in
             fun(Item) ->
               check_item(is_divided_without_rem_on_seq(Item, 2, 20), Item)
             end,
-            lists:seq(Start, 300000000)
+            lists:seq(Start, ?PROPERTY_MAX_COUNTER)
           ),
           X =/= 0
         ]
@@ -136,7 +136,7 @@ Find the value of d < 1000 for which 1/d contains the longest recurring cycle in
      ListIter = endless_list:create(fun(X) -> X + 1 end, 1),
       endless_list_find_solution(ListIter, 1).
 
-    endless_list_find_solution(_, 300000000) -> 0;
+    endless_list_find_solution(_, ?PROPERTY_MAX_COUNTER) -> 0;
 
     endless_list_find_solution(Iter, Count) ->
       Value = endless_list:next(Iter),
@@ -187,7 +187,7 @@ Find the value of d < 1000 for which 1/d contains the longest recurring cycle in
    tail_recursion_start() ->
      tail_recursion(1, 0).
 
-    tail_recursion(1001, Max) ->
+    tail_recursion(?PROPERTY_MAX_COUNTER, Max) ->
       Max;
 
     tail_recursion(Number, Max) ->
@@ -215,7 +215,7 @@ Find the value of d < 1000 for which 1/d contains the longest recurring cycle in
    recursion_start() ->
      recursion(1, 0).
 
-    recursion(1001, Max) ->
+    recursion(?PROPERTY_MAX_COUNTER, Max) ->
      Max;
 
     recursion(Number, Max) ->
@@ -255,7 +255,7 @@ Find the value of d < 1000 for which 1/d contains the longest recurring cycle in
 
     map() -> element(2, map(1, get_prime_list(990), 0, 0)).
 
-    map(1001, List, Max, _M) -> {List, Max + 1};
+    map(?PROPERTY_MAX_COUNTER, List, Max, _M) -> {List, Max + 1};
 
     map(Counter, List, Max, M) ->
       NewM = M * 10 + 9,
@@ -320,7 +320,7 @@ Find the value of d < 1000 for which 1/d contains the longest recurring cycle in
         _ -> {Max, UsedPrimes}
       end.
 
-    endless_list_find_solution(1001, _, Max, _) -> Max;
+    endless_list_find_solution(?PROPERTY_MAX_COUNTER, _, Max, _) -> Max;
 
     endless_list_find_solution(Counter, M, Max, UsedPrimes) ->
      NewM = M * 10 + 9,
