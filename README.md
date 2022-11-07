@@ -130,7 +130,28 @@ Find the value of d < 1000 for which 1/d contains the longest recurring cycle in
       ```
       В список попадают только те числа, что удовлетворяют условию функции map, на вход map передаем искомый диапазон
 
-4. __реализация на любом удобном языке программировании__
+4. __работа с бесконечными списками для языков поддерживающих ленивые коллекции или итераторы как часть языка__
+    ```
+    endless_list_start() ->
+     ListIter = endless_list:create(fun(X) -> X + 1 end, 1),
+      endless_list_find_solution(ListIter, 1).
+
+    endless_list_find_solution(_, 300000000) -> 0;
+
+    endless_list_find_solution(Iter, Count) ->
+      Value = endless_list:next(Iter),
+      case Value of
+       error -> exit("Endless list timed out!");
+        _ ->
+          case is_divided_without_rem_on_seq(Value, 1, 20) of
+           true -> Value;
+            _ -> endless_list_find_solution(Iter, Count + 1)
+          end
+     end.
+     ```
+     Проверяем число с помощью всопомгательной функции, если нет, то вызываем следующую итерацию с большим числом.
+
+5. __реализация на любом удобном языке программировании__
     ```
     #include <iostream>
 
@@ -256,6 +277,7 @@ Find the value of d < 1000 for which 1/d contains the longest recurring cycle in
      ```
      Данее решение аналогично предыдущему и адаптированно под map.
 
+    ```
     is_prime(Number) ->
       case Number of Number
         when Number =< 2 -> Number == 2;
@@ -271,8 +293,45 @@ Find the value of d < 1000 for which 1/d contains the longest recurring cycle in
             _ -> false
          end
       end.
-  
- 5. __реализация на любом удобном языке программировании__
+      ```
+      Функция для нахождения простых чисел(как вариант можно заменить готовым списком)
+ 
+ 5. __работа с бесконечными списками для языков поддерживающих ленивые коллекции или итераторы как часть языка__
+    ```
+    endless_list_start() -> endless_list_find_solution(1, 0, 0, maps:new()).
+
+    fill_map_loop(ListIter, Counter, M, Max, UsedPrimes) ->
+      case endless_list:filter_next(ListIter, fun is_prime/1) of
+       Error when Error == error -> exit("Endless list generator timed out!");
+        NextPrime when NextPrime > 997 -> {Max, UsedPrimes};
+       NextPrime when NextPrime =< 997 ->
+         MaxUsedPrimesTuple = fill_map(NextPrime, Counter, M, Max, UsedPrimes),
+         fill_map_loop(ListIter, Counter, M, element(1, MaxUsedPrimesTuple), element(2, MaxUsedPrimesTuple))
+     end.
+
+    fill_map(NextPrime, Counter, M, Max, UsedPrimes) ->
+     case maps:get(NextPrime, UsedPrimes, none) == none of IsNotInUsedPrimes
+        when IsNotInUsedPrimes == true, M rem NextPrime == 0 ->
+        NewUsedPrimes = maps:put(NextPrime, NextPrime, UsedPrimes),
+       case Counter > Max of
+          true -> {NextPrime, NewUsedPrimes};
+          _ -> {Max, NewUsedPrimes}
+        end;
+        _ -> {Max, UsedPrimes}
+      end.
+
+    endless_list_find_solution(1001, _, Max, _) -> Max;
+
+    endless_list_find_solution(Counter, M, Max, UsedPrimes) ->
+     NewM = M * 10 + 9,
+     ListIter = endless_list:create(fun(X) -> X + 1 end, 2),
+     MaxUsedPrimesTuple = fill_map_loop(ListIter, Counter, NewM, Max, UsedPrimes),
+     endless_list:delete(ListIter),
+     endless_list_find_solution(Counter + 1, NewM, element(1, MaxUsedPrimesTuple), element(2, MaxUsedPrimesTuple)).
+     ```
+     Проверка аналогична решению с map(используется та же проверка периода с помощью девяток)
+     
+ 6. __реализация на любом удобном языке программировании__
     ```
     #include <iostream>
     #include <unordered_map>
@@ -311,3 +370,41 @@ Find the value of d < 1000 for which 1/d contains the longest recurring cycle in
     }
     ```
     Перебор всех чисел для поиска самого длинного периода
+    
+    
+    
+    
+    ### Endless list
+    ```
+    create(Func, Start) ->
+     spawn(endless_list, internal_loop, [Func, Start]).
+
+    internal_loop(Func, Next) ->
+      receive
+       {Pid} ->
+         Pid ! Next,
+         NewNext = Func(Next),
+         internal_loop(Func, NewNext);
+        finished -> ok
+      end.
+
+    next(ListIter) ->
+     ListIter ! {self()},
+     receive
+        Next -> Next
+      after 10000 -> error
+     end.
+
+    filter_next(ListIter, FilterFunc) ->
+     case next(ListIter) of
+        Next when Next == error -> error;
+        Next when Next =/= error ->
+         case FilterFunc(Next) of
+            true -> Next;
+           _ -> filter_next(ListIter, FilterFunc)
+          end
+      end.
+
+    delete(ListIter) ->
+     ListIter ! finished.
+  ```
