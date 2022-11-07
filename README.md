@@ -72,6 +72,8 @@ Find the value of d < 1000 for which 1/d contains the longest recurring cycle in
     tail_recursion(Number, false) -> tail_recursion(Number + 1, is_divided_without_rem_on_seq(Number, 2, 20)).
     
     ```
+    Вспомогательная функция проверяет делимость числа, в случае успеха выводится число, иначе рекурсивно вызвать фунцию и продолжить проверять (предыдующее + 1) число.
+    
     
     + __рекурсия__
     ```
@@ -88,7 +90,9 @@ Find the value of d < 1000 for which 1/d contains the longest recurring cycle in
           end;
         Result when Result =/= 0 -> Result
       end.
-   
+    ```
+    Также проверять всопомогательной функцией пока не найден результат.
+    
 2. __Filter реализация__
     ```
     filter_start() ->
@@ -98,7 +102,9 @@ Find the value of d < 1000 for which 1/d contains the longest recurring cycle in
           [Y ||
             Y <- [X || X <- lists:seq(1, 300000000), X rem 2 == 0],
             is_divided_without_rem_on_seq(Y, 3, 20) == true])).
-            
+     ```
+     Генерируем сначала только четные числа(т.к есть условии делимости на них), далее только те, что удовлетворяют условию функции
+     
 3. __Map реализация__
     ```
     map_start() ->
@@ -121,6 +127,8 @@ Find the value of d < 1000 for which 1/d contains the longest recurring cycle in
           X =/= 0
         ]
       ).
+      ```
+      В список попадают только те числа, что удовлетворяют условию функции map, на вход map передаем искомый диапазон
 
 4. __реализация на любом удобном языке программировании__
     ```
@@ -148,7 +156,8 @@ Find the value of d < 1000 for which 1/d contains the longest recurring cycle in
         }
         return 0;
     }
-    
+    ```
+    Простая проверка в цикле каждого числа на делимость от 1 до 20.
     
 ### Problem 26
 
@@ -177,6 +186,9 @@ Find the value of d < 1000 for which 1/d contains the longest recurring cycle in
             maps:put(Rem, Position, FirstPos));
        _ -> Period
      end.
+     ```
+     Проверяем длину полученного периода с помощью вспомогательной функции генерации периода, в случае если длинее предыдущего максимума, то рекурсивный вызов с новым max иначе вызов со старым max
+     
 2. __Рекурсия__
    ```
    recursion_start() ->
@@ -191,6 +203,8 @@ Find the value of d < 1000 for which 1/d contains the longest recurring cycle in
        when PeriodLen > NewMax -> PeriodLen;
         _ -> NewMax
       end.
+    ```
+    Простая рекурсивная проверка с использованием вспомогательной функции генерации периода 
      
 3. __Fold implementation__
    ```
@@ -209,6 +223,10 @@ Find the value of d < 1000 for which 1/d contains the longest recurring cycle in
 
     fold_start() ->
      lists:last(period_fold(981, get_prime_list(1001))).
+     ```
+     В данном решении используется то, что если период числа домножить на 10^(длина периода) и умножить на делитель, то полуится число вида 999999*
+     т.е те наборы 99999* что делятся без остатка на число вероятно являются его периодом. В данном решении перый элемент увеличивается в длину на 9 каждый   вызов, после чего все элементы списка(только простые числа) проверяются на остаток, те у кого он отстутвуют остаются в аккумуляторе
+     https://www.xarg.org/puzzle/project-euler/problem-26/
      
 4. __Map implementation__
    ```
@@ -235,7 +253,8 @@ Find the value of d < 1000 for which 1/d contains the longest recurring cycle in
         List
      ),
       map(Counter + 1, element(1, ListAndMax), element(2, ListAndMax), NewM).
-
+     ```
+     Данее решение аналогично предыдущему и адаптированно под map.
 
     is_prime(Number) ->
       case Number of Number
@@ -290,3 +309,5 @@ Find the value of d < 1000 for which 1/d contains the longest recurring cycle in
        std::cout << nMax << std::endl;
        std::cout << index << std::endl;
     }
+    ```
+    Перебор всех чисел для поиска самого длинного периода
