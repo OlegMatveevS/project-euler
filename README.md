@@ -60,16 +60,18 @@ Find the value of d < 1000 for which 1/d contains the longest recurring cycle in
 1. __монолитная реализация__
     + __хвостовая рекурсия__
     ```
-    is_divided_without_rem_on_seq(Number, Start, Finish) ->
-      is_divided_result(length([X || X <- lists:seq(Start, Finish), Number rem X =/= 0])).
-    
-    tail_recursion_start() -> tail_recursion(1, false).
+    tail_recursion_start() ->
+      tail_recursion(1, ?PROPERTY_MAX_COUNTER).
 
-    tail_recursion(?PROPERTY_MAX_COUNTER, _) -> print_answer(0);
+    tail_recursion(Start, Finish) ->
+     tail_recursion(Start, Finish, 0).
 
-    tail_recursion(Number, true) -> print_answer(Number - 1);
+    tail_recursion(Start, Finish, Acc) ->
+      case is_divided_without_rem_on_seq(Start, 2, 20) of
+       true -> Start + 0;
+       false -> tail_recursion(Start + 1, Finish, Acc)
+      end.
 
-    tail_recursion(Number, false) -> tail_recursion(Number + 1, is_divided_without_rem_on_seq(Number, 2, 20)).
     
     ```
     Вспомогательная функция проверяет делимость числа, в случае успеха выводится число, иначе рекурсивно вызвать фунцию и продолжить проверять (предыдующее + 1) число.
@@ -77,9 +79,9 @@ Find the value of d < 1000 for which 1/d contains the longest recurring cycle in
     
     + __рекурсия__
     ```
-    recursion_start() -> print_answer(recursion(1)).
+    recursion_start() -> recursion(1).
 
-    recursion(?PROPERTY_MAX_COUNTER) -> 0;
+    recursion(?PROPERTY_MAX_COUNTER) -> error;
 
     recursion(Number) ->
       case recursion(Number + 1) of
@@ -96,7 +98,6 @@ Find the value of d < 1000 for which 1/d contains the longest recurring cycle in
 2. __Filter реализация__
     ```
     filter_start() ->
-      print_answer(
         lists:nth(
           1,
           [Y ||
@@ -108,7 +109,7 @@ Find the value of d < 1000 for which 1/d contains the longest recurring cycle in
 3. __Map реализация__
     ```
     map_start() ->
-      print_answer(map(2)).
+      map(2).
 
     check_item(true, Item) -> Item;
 
