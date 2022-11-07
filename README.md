@@ -137,7 +137,7 @@ Find the value of d < 1000 for which 1/d contains the longest recurring cycle in
      ListIter = endless_list:create(fun(X) -> X + 1 end, 1),
       endless_list_find_solution(ListIter, 1).
 
-    endless_list_find_solution(_, ?PROPERTY_MAX_COUNTER) -> 0;
+    endless_list_find_solution(_, ?PROPERTY_MAX_COUNTER) -> error;
 
     endless_list_find_solution(Iter, Count) ->
       Value = endless_list:next(Iter),
