@@ -1,7 +1,5 @@
 -module(period).
 
--author("олег").
-
 %% API
 -export([tail_recursion_start/0, recursion_start/0, fold_start/0, map_start/0, endless_list_start/0]).
 
