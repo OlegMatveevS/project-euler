@@ -1,4 +1,5 @@
 -module(endless_list).
+
 -author("oleg").
 
 %% API
