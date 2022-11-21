@@ -1,4 +1,5 @@
 -module(period).
+
 -author("олег").
 
 %% API
