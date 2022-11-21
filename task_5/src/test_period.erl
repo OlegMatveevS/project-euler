@@ -1,6 +1,5 @@
 -module(test_period).
 
--author("олег").
 
 %% API
 -include_lib("eunit/include/eunit.hrl").
