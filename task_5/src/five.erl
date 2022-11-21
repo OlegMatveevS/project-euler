@@ -1,7 +1,5 @@
 -module(five).
 
--author("oleg").
-
 %% API
 -export([
   tail_recursion_start/0,
