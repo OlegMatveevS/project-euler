@@ -1,6 +1,5 @@
 -module(test_five).
 
--author("олег").
 
 %% API
 -include_lib("eunit/include/eunit.hrl").
