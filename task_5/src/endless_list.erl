@@ -20,7 +20,7 @@ next(ListIter) ->
   ListIter ! {self()},
   receive
     Next -> Next
-  after 10000 -> error
+  after 10000 -> exit(timeout)
   end.
 
 filter_next(ListIter, FilterFunc) ->
