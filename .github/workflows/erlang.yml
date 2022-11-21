@@ -16,13 +16,13 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Format
-        working-directory: ${{github.workspace}}/task5
+        working-directory: ${{github.workspace}}/task_5
         run: rebar3 format
 
       - name: Lint
-        working-directory: ${{github.workspace}}/task5
+        working-directory: ${{github.workspace}}/task_5
         run: rebar3 lint
 
       - name: Compile
-        working-directory: ${{github.workspace}}/task5
+        working-directory: ${{github.workspace}}/task_5
         run: rebar3 compile
