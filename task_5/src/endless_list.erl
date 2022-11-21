@@ -1,6 +1,5 @@
 -module(endless_list).
 
--author("oleg").
 
 %% API
 -export([create/2, internal_loop/2, next/1, filter_next/2, delete/1]).
