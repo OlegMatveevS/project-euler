@@ -10,7 +10,7 @@ create(Func, Start) ->
 internal_loop(Func, Next) ->
   receive
     {Pid} ->
-      Pid ! Func(Next),
+      Pid ! Next,
       NewNext = Func(Next),
       internal_loop(Func, NewNext);
     after 5000 -> exit(timeout)
