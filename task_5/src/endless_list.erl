@@ -14,10 +14,11 @@ internal_loop(Func, Next) ->
       NewNext = Next,
       internal_loop(Func, NewNext);
     close -> closed
+  after 10000 -> exit(timeout)
   end.
 
 next(ListIter) ->
-  ListIter ! {self(), take_next, Next},
+  ListIter ! {self(), take_next},
   receive
     Next -> Next
   after 10000 -> exit(timeout)
