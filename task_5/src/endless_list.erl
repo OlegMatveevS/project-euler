@@ -9,7 +9,7 @@ create(Func, Start) ->
 
 internal_loop(Func, Next) ->
   receive
-    {Pid} ->
+    {Pid, take_next, Next} ->
       Pid ! Next,
       NewNext = Func(Next),
       internal_loop(Func, NewNext);
