@@ -17,7 +17,7 @@ internal_loop(Func, Next) ->
   end.
 
 next(ListIter) ->
-  ListIter ! {self()},
+  ListIter ! {self(), take_next, Next},
   receive
     Next -> Next
   after 10000 -> exit(timeout)
