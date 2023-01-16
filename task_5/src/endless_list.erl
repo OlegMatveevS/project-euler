@@ -13,7 +13,7 @@ internal_loop(Func, Next) ->
       Pid ! Next,
       NewNext = Func(Next),
       internal_loop(Func, NewNext);
-    finished -> ok
+    close -> closed
   end.
 
 next(ListIter) ->
