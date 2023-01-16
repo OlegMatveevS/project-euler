@@ -11,9 +11,8 @@ internal_loop(Func, Next) ->
   receive
     {Pid, take_next, Next} ->
       Pid ! Next,
-      NewNext = Func(Next),
+      NewNext = Next,
       internal_loop(Func, NewNext);
-    after 5000 -> exit(timeout)
     close -> closed
   end.
 
